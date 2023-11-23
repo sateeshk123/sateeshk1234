@@ -1,0 +1,51 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+<div class="container" style="min-height: 94vh">
+  <div class="card shadow" style="margin-top: 54px">
+    <div class="card-body">
+      <h4 class="p-2" style="border-bottom: 2px solid green">
+        Event Booking Details
+      </h4>
+      <div class="row">
+        <div class="col-sm-4 p-2">
+          <img src="{{ev.photo.url}}" alt="event image" class="img-thumbnail" />
+        </div>
+        <div class="col-sm-4 p-2">
+          <h4>{{ev.name}}</h4>
+          <p>Place: {{ev.place}}</p>
+          <h5>Max Capacity : {{ev.maxcapacity}}</h5>
+          <small>(including adults and childrent)</small>
+        </div>
+        <div class="col-sm-4">
+          {% if 'userid' in request.session %}
+          <h4 class="p-2">Book Event</h4>
+          <form method="post">
+            {% csrf_token %} <input type="hidden" value"{{ev.eventid}}"
+            name="eventid" />
+            <div class="mb-2">
+              <label>Event Date</label>
+              <input type="date" name="eventdate" class="form-control" />
+            </div>
+            <div class="mb-2">
+              <label>Total Adults</label>
+              <input type="number" name="adults" class="form-control" />
+            </div>
+            <div class="mb-2">
+              <label>Total Children</label>
+              <input type="number" name="child" class="form-control" />
+            </div>
+            <button class="btn btn-primary mt-3 float-end">Book Event</button>
+          </form>
+        </div>
+        {% else %}
+        <div class="card card-body">
+          <h6>
+            Please <a href="/login">Login</a> or
+            <a href="/register">Register</a> to book event.
+          </h6>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

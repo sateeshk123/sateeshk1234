@@ -1,0 +1,206 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+<div class="container" style="min-height: 80vh">
+  <div class="card shadow" style="margin-top: 14px">
+    <div class="card-body">
+      <h4 class="p-2" style="border-bottom: 2px solid green">
+        Booking Details
+      </h4>
+      <div class="row">
+        <div class="col-sm-4 p-2">
+          <img
+            src="{{bk.event.photo.url}}"
+            alt="event image"
+            class="img-thumbnail"
+          />
+          <h4>{{bk.event.name}}</h4>
+          <p>Place: {{bk.event.place}}</p>
+          <h5>Adult : {{bk.adults}}</h5>
+          <h5>Child : {{bk.child}}</h5>
+          <h5>Status: {{bk.status}}</h5>
+          {% if bk.status != 'Pending' %}
+          <h5>Amount : &#8377; {{bk.amount}}</h5>
+          {% endif %} {% if bk.status == 'Under Progress' %}
+          <div class="progress">
+            <div
+              class="progress-bar progress-bar-striped"
+              role="progressbar"
+              style="width: {{bk.progress}}%"
+              aria-valuenow="{{bk.progress}}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              {{bk.progress}}%
+            </div>
+          </div>
+          {% endif %} {% if bk.status == 'Amount Proposed' and isuser %}
+          <a
+            href="/updatestatus?bid={{bk.bid}}&status=Accepted"
+            class="btn btn-success btn-sm"
+            >Accept</a
+          >
+          <a
+            href="/updatestatus?bid={{bk.bid}}&status=Rejected"
+            class="btn btn-danger btn-sm"
+            >Reject</a
+          >
+          {% endif %}
+        </div>
+        <div class="col-sm-5">
+          <h4 class="p-2">Booked Food Items</h4>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                {% if bk.status == 'Pending' and isuser %}
+                <th>Action</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in bitems %}
+              <tr>
+                <td>{{i.item.name}}</td>
+                <td>
+                  {{i.qty}} {{i.item.unit}}<br />
+                  <small>({{i.item.remarks}})</small>
+                </td>
+                {% if bk.status == 'Pending' and isuser %}
+                <td>
+                  <a
+                    href="/delitem?bid={{bk.bid}}&itemid={{i.itemid}}"
+                    class="btn btn-danger btn-sm"
+                    >Delete</a
+                  >
+                </td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-3">
+          {% if bk.status == 'Pending' and isuser %}
+          <h4 class="p-2">Add Food Items</h4>
+          <form method="post" action="/additem/">
+            {% csrf_token %}
+            <input type="hidden" value="{{bk.bid}}" name="bid" />
+            <div class="mb-2">
+              <label>Select Food Item</label>
+              <select name="itemid" required class="form-control">
+                <option value="">Select Item</option>
+                {% for item in items %}
+                <option value="{{item.fid}}">
+                  {{item.name}} - {{item.unit}} - {{item.remarks}}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-2">
+              <label>Quantity</label>
+              <input type="number" required name="qty" class="form-control" />
+            </div>
+            <button class="btn btn-primary mt-3 float-end">Add Item</button>
+          </form>
+          {% endif %} {% if bk.status == 'Pending' and isadmin %}
+          <h4 class="p-2">Admin Amount Define</h4>
+          <form method="post" action="/updateamount/">
+            {% csrf_token %}
+            <input type="hidden" name="bid" value="{{bk.bid}}" />
+            <div class="mb-2">
+              <label>Amount</label>
+              <input
+                type="number"
+                name="amount"
+                required
+                placeholder="Amount decided"
+                class="form-control"
+              />
+            </div>
+            <button class="btn btn-success btn-sm float-end">Submit</button>
+          </form>
+          {% endif %} {% if bk.status == 'Accepted' and isuser %}
+          <h5>Payment Information</h5>
+          <form method="post" action="/payment/">
+            {% csrf_token %}
+            <input type="hidden" name="bid" value="{{bk.bid}}" />
+            <div class="mb-2">
+              <label>Card No</label>
+              <input
+                type="text"
+                class="form-control"
+                name="cardno"
+                maxlength="16"
+                required
+                pattern="[0-9]{16,16}"
+              />
+            </div>
+            <div class="mb-2">
+              <label>Name on card</label>
+              <input
+                type="text"
+                class="form-control"
+                name="nameoncard"
+                required
+                pattern="[a-zA-Z ]+"
+              />
+            </div>
+            <div class="mb-2">
+              <label>Expiry Date</label>
+              <input type="month" required class="form-control" />
+            </div>
+            <div class="mb-2">
+              <label>CVV</label>
+              <input
+                type="text"
+                maxlength="3"
+                required
+                pattern="[0-9]{3,3}"
+                class="form-control"
+              />
+            </div>
+            <button class="btn btn-primary float-end">Submit</button>
+          </form>
+          {% endif %} {% if bk.status == 'Confirmed and Paid' and isadmin %}
+          <h4 class="p-2">Update Progress</h4>
+          <form method="post" action="/updateprogress/">
+            {% csrf_token %}
+            <input type="hidden" name="bid" value="{{bk.bid}}" />
+            <div class="mb-2">
+              <label>Enter Progress</label>
+              <input
+                type="progress"
+                name="progress"
+                min="1"
+                max="100"
+                placeholder="Progress"
+                class="form-control"
+              />
+            </div>
+            <button class="btn btn-success btn-sm float-end">Submit</button>
+          </form>
+          {% endif %} {% if bk.status == 'Under Progress' and isadmin %}
+          <h4 class="p-2">Update Progress</h4>
+          <form method="post" action="/updateprogress/">
+            {% csrf_token %}
+            <input type="hidden" name="bid" value="{{bk.bid}}" />
+            <div class="mb-2">
+              <label>Enter Progress</label>
+              <input
+                type="progress"
+                name="progress"
+                min="1"
+                max="100"
+                placeholder="Progress"
+                class="form-control"
+              />
+            </div>
+            <button class="btn btn-success btn-sm float-end">Submit</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

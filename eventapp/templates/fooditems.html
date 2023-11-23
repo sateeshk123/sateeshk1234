@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+<div class="container">
+  <h4 class="p-2" style="border-bottom: 2px solid green">Food items</h4>
+  <div class="row">
+    <div class="col-sm-8">
+  <table class="table table-borderd">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Units</th>
+        <th>Remarks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%for item in items %}
+      <tr>
+        <td>{{item.fid}}</th>
+        <td>{{item.name}}</th>
+        <td>{{item.unit}}</th>
+        <td>{{item.remarks}}</th>
+        <td><a href="{{item.fid}}" class="btn btn-danger btn-sm">Delete</a></th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="col-sm-4">
+      <form method="post">
+        {% csrf_token %}
+          <h5>Add Food Item</h5>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              rows="4"
+              name="name"
+              placeholder="Item name"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              name="unit"
+              placeholder="Unit e.g. plates,items,etc"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              name="remarks"
+              placeholder="Remarks like 1 plate have 5 items"
+            />
+          </div>
+          <button class="btn btn-primary float-right">Save Item</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

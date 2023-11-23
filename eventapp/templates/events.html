@@ -1,0 +1,94 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+<div class="container">
+  {% if isadmin %}
+  <button
+    type="button"
+    data-bs-target="#sadd"
+    data-bs-toggle="modal"
+    class="btn btn-success btn-sm float-end mt-2"
+  >
+    Add New
+  </button>
+  {% endif %}
+  <h4 class="p-2" style="border-bottom: 2px solid green">Events</h4>
+  <div class="row">
+    {%for ev in events %}
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="text-center">{{ev.name}}</h6>
+        </div>
+        <div class="card-body">
+          <img
+            src="{{ev.photo.url}}"
+            style="height: 200px"
+            class="card-img-top"
+          />
+        </div>
+        <div class="card-footer text-center">
+          Venue : {{ev.place}}<br />
+          Max Capacity: {{ev.maxcapacity}}<br />
+          <a
+            href="/events/{{ev.eventid}}"
+            class="btn btn-sm btn-success bg-gradient mt-2"
+            >Book Now</a
+          >
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="modal fade" id="sadd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5>Add New Event</h5>
+          <button type="button" data-bs-dismiss="modal" class="btn-close">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              rows="4"
+              name="name"
+              placeholder="Event name"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              name="place"
+              placeholder="Place of Event"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="number"
+              class="form-control"
+              name="capacity"
+              placeholder="Max Capacity"
+            />
+          </div>
+          <div class="mb-3">
+            <input type="file" class="form-control" name="photo" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary float-right">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelector('#startdate').valueAsDate = new Date()
+  document.querySelector('#enddate').valueAsDate = new Date()
+</script>
+{% endblock %}

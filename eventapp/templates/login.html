@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block 'main' %} {% load static %}
+<div class="container" style="min-height: 92.3vh">
+  <div class="row">
+    <div class="col-sm-4 mx-auto shadow p-4" style="margin-top: 150px">
+      <h4 class="text-center">Login Screen</h4>
+      <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label>User Id</label>
+          <input
+            type="text"
+            placeholder="User ID here"
+            name="userid"
+            class="form-control"
+          />
+        </div>
+        <div class="mb-3">
+          <label>Password</label>
+          <input
+            type="password"
+            name="pwd"
+            placeholder="Password here"
+            class="form-control"
+          />
+        </div>
+        <input type="submit" value="Login" class="btn btn-danger float-end" />
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

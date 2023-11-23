@@ -1,0 +1,39 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+<div class="container">
+  <h4 class="p-2">Bookings</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Booking Id</th>
+        <th>Event Name</th>
+        <th>Place</th>
+        <th>Booking Date</th>
+        <th>Adults</th>
+        <th>Children</th>
+        <th>Status</th>
+        <th>User Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bk in blist %}
+      <tr>
+        <td>{{bk.bid}}</td>
+        <td>{{bk.event.name}}</td>
+        <td>{{bk.event.place}}</td>
+        <td>{{bk.book_date}}</td>
+        <td>{{bk.adults}}</td>
+        <td>{{bk.child}}</td>
+        <td>{{bk.status}}</td>
+        <td>{{bk.user.uname}}</td>
+        <td>
+          <a href="/bookings/{{bk.bid}}" class="btn btn-primary btn-sm"
+            >Details</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
